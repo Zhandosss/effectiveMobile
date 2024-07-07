@@ -44,30 +44,8 @@ func (r *WorkRepository) StopWork(ctx context.Context, id string) error {
 		return errors.New("end time is not set")
 	}
 
-	query := `SELECT start_time, time_period_in_minute FROM works WHERE id = $1`
-	var startTime time.Time
-	var timePeriodString string
-	err = r.conn.QueryRowContext(ctx, query, id).Scan(&startTime, &timePeriodString)
-	if err != nil {
-		return err
-	}
-
-	workDuration := endTime.Sub(startTime)
-
-	oldTime, err := time.ParseDuration(timePeriodString)
-	if err != nil {
-		return err
-	}
-
-	newTime := oldTime + workDuration
-
-	hours := int(newTime.Hours())
-	minute := int(newTime.Minutes()) % 60
-
-	timeAns := fmt.Sprintf("%dh%dm", hours, minute)
-
-	query = `UPDATE works SET end_time = $1, time_period_in_minute = $2 WHERE id = $3`
-	_, err = r.conn.ExecContext(ctx, query, endTime, timeAns, id)
+	query := `UPDATE works SET end_time = $1 WHERE id = $2`
+	_, err = r.conn.ExecContext(ctx, query, endTime, id)
 	if err != nil {
 		return err
 	}

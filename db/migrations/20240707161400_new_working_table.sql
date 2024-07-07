@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS works (
     name VARCHAR(255) NOT NULL,
     start_time TIMESTAMPTZ NOT NULL,
     end_time TIMESTAMPTZ,
-    time_period_in_minute VARCHAR(255) NOT NULL DEFAULT '00h00m', --time adds only after work is done
     primary key (id),
     foreign key (user_id) references users(id)
     );

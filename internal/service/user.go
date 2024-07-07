@@ -3,10 +3,18 @@ package service
 import (
 	"context"
 	"effectiveMobileTestProblem/internal/model"
+	"errors"
 )
 
 func (s *UserService) CreateUser(ctx context.Context, user *model.User) (string, error) {
-	return s.userRepository.CreateUser(ctx, user)
+	_, err := s.userRepository.GetUserByPassport(ctx, user.PassportSeriesAndNumber)
+	if errors.Is(err, model.ErrNotFound) {
+		return s.userRepository.CreateUser(ctx, user)
+	}
+	if err != nil {
+		return "", err
+	}
+	return "", model.ErrAlreadyExists
 }
 
 func (s *UserService) GetUserById(ctx context.Context, id string) (*model.User, error) {

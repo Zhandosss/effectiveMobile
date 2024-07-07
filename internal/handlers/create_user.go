@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"effectiveMobileTestProblem/internal/model"
+	"errors"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 	"net/http"
@@ -61,6 +62,12 @@ func (h *Handlers) CreateUser(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 10*time.Second)
 	defer cancel()
 	id, err := h.UserService.CreateUser(ctx, &req)
+
+	if errors.Is(err, model.ErrAlreadyExists) {
+		log.Error().Msgf("User with passport series and number: %s already exists", req.PassportSeriesAndNumber)
+		return c.JSON(http.StatusBadRequest, ErrorResponse{Message: "User with this passport series and number already exists"})
+	}
+
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create user")
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{Message: "Failed to create user"})

@@ -14,6 +14,7 @@ func (r *UserRepository) CreateUser(ctx context.Context, user *model.User) (stri
 	if err != nil {
 		return "", err
 	}
+
 	defer tx.Rollback()
 	query := `INSERT INTO users (passport_number, passport_series, name, surname, address) VALUES ($1, $2, $3, $4, $5) RETURNING id`
 	var id string
@@ -38,6 +39,11 @@ func (r *UserRepository) GetUserById(ctx context.Context, id string) (*entity.Us
 		fmt.Println(err)
 		return &entity.UserDB{}, err
 	}
+
+	if len(user) == 0 {
+		return &entity.UserDB{}, model.ErrNotFound
+
+	}
 	return user[0], nil
 }
 
@@ -47,9 +53,14 @@ func (r *UserRepository) GetUserByPassport(ctx context.Context, passport string)
 	passportData := strings.Split(passport, " ")
 	passportSeries := passportData[0]
 	passportNumber := passportData[1]
+
 	err := r.conn.SelectContext(ctx, &user, query, passportNumber, passportSeries)
+
 	if err != nil {
 		return &entity.UserDB{}, err
+	}
+	if len(user) == 0 {
+		return &entity.UserDB{}, model.ErrNotFound
 	}
 	return user[0], nil
 }
