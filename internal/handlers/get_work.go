@@ -48,7 +48,7 @@ func (h *Handlers) GetWorkById(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param user query string true "User ID"
-// @Success 200 {object} GetWorksResponse
+// @Success 200 {object} []model.Work
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /work [get]

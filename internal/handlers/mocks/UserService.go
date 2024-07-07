@@ -139,9 +139,9 @@ func (_m *UserService) GetUserByPassport(ctx context.Context, passport string) (
 	return r0, r1
 }
 
-// GetUsers provides a mock function with given fields: ctx
-func (_m *UserService) GetUsers(ctx context.Context) ([]*model.User, error) {
-	ret := _m.Called(ctx)
+// GetUsers provides a mock function with given fields: ctx, filterAndPagination
+func (_m *UserService) GetUsers(ctx context.Context, filterAndPagination *model.FilterAndPagination) ([]*model.User, error) {
+	ret := _m.Called(ctx, filterAndPagination)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetUsers")
@@ -149,19 +149,19 @@ func (_m *UserService) GetUsers(ctx context.Context) ([]*model.User, error) {
 
 	var r0 []*model.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context) ([]*model.User, error)); ok {
-		return rf(ctx)
+	if rf, ok := ret.Get(0).(func(context.Context, *model.FilterAndPagination) ([]*model.User, error)); ok {
+		return rf(ctx, filterAndPagination)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context) []*model.User); ok {
-		r0 = rf(ctx)
+	if rf, ok := ret.Get(0).(func(context.Context, *model.FilterAndPagination) []*model.User); ok {
+		r0 = rf(ctx, filterAndPagination)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*model.User)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
-		r1 = rf(ctx)
+	if rf, ok := ret.Get(1).(func(context.Context, *model.FilterAndPagination) error); ok {
+		r1 = rf(ctx, filterAndPagination)
 	} else {
 		r1 = ret.Error(1)
 	}
