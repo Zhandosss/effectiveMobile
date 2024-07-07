@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"effectiveMobileTestProblem/internal/model"
+	"errors"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 	"net/http"
@@ -38,6 +39,11 @@ func (h *Handlers) GetUserById(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 10*time.Second)
 	defer cancel()
 	user, err := h.UserService.GetUserById(ctx, id)
+	if errors.Is(err, model.ErrNotFound) {
+		log.Error().Msgf("User with id %s not found", id)
+		return c.JSON(http.StatusNotFound, ErrorResponse{Message: "User not found"})
+	}
+
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting user")
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{Message: "Error getting user"})
@@ -70,6 +76,10 @@ func (h *Handlers) GetUserByPassport(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 10*time.Second)
 	defer cancel()
 	user, err := h.UserService.GetUserByPassport(ctx, passport)
+	if errors.Is(err, model.ErrNotFound) {
+		log.Error().Msgf("User with passport series and number %s not found", passport)
+		return c.JSON(http.StatusNotFound, ErrorResponse{Message: "User not found"})
+	}
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting user")
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{Message: "Error getting user"})
