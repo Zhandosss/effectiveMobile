@@ -3,17 +3,9 @@ package handlers
 import (
 	"context"
 	"effectiveMobileTestProblem/internal/model"
-	"errors"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/rs/zerolog/log"
-)
-
-var (
-	//TODO: change error message
-	ErrInvalidPassportType   = errors.New(`invalid passport type. Passport should have next structure: "1234 56789"`)
-	ErrInvalidPassportSeries = errors.New(`invalid passport series. Passport series should be a number`)
-	ErrInvalidPassportNumber = errors.New(`invalid passport number. Passport number should be a number`)
 )
 
 type PaginationInfo struct {

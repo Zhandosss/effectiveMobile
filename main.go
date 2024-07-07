@@ -7,8 +7,10 @@ import (
 	"effectiveMobileTestProblem/internal/handlers"
 	"effectiveMobileTestProblem/internal/repository"
 	"effectiveMobileTestProblem/internal/service"
+	"embed"
 	"errors"
 	"github.com/labstack/echo/v4"
+	"github.com/pressly/goose/v3"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -20,6 +22,9 @@ import (
 
 	_ "effectiveMobileTestProblem/docs"
 )
+
+//go:embed db/migrations/*.sql
+var embedMigrations embed.FS
 
 //@title Time Tracker API
 //@version 1.0
@@ -33,7 +38,6 @@ func main() {
 	cfg := configs.Load()
 	log.Info().Msg("Config loaded successfully")
 	log.Debug().Msgf("Server configs: %+v", cfg.Server)
-	//TODO: do not log the DB password
 	log.Debug().Msgf("DB configs: %+v", cfg.DB)
 
 	// Start the server
@@ -46,6 +50,16 @@ func main() {
 		}
 		log.Info().Msg("DB connection closed")
 	}()
+
+	goose.SetBaseFS(embedMigrations)
+
+	if err := goose.SetDialect("postgres"); err != nil {
+		log.Fatal().Msgf("Error setting dialect: %s", err)
+	}
+
+	if err := goose.Up(conn.DB, "db/migrations"); err != nil {
+		log.Fatal().Msgf("Error applying migrations: %s", err)
+	}
 
 	userRep := repository.NewUser(conn)
 	log.Debug().Msg("User repository created")
@@ -76,7 +90,6 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	defer stop()
 
-	log.Info().Msgf("Server started on %s", server.Addr)
 	go func() {
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatal().Msgf("Server shut down: %s", err)

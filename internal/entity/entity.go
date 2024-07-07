@@ -7,12 +7,12 @@ import (
 
 // TODO: Delete json???
 type UserDB struct {
-	ID             string `json:"id,omitempty" db:"id"`
-	PassportSeries string `json:"passport_series" db:"passport_series"`
-	PassportNumber string `json:"passport_number" db:"passport_number"`
-	Name           string `json:"name" db:"name"`
-	Surname        string `json:"surname" db:"surname"`
-	Address        string `json:"address" db:"address"`
+	ID             string `db:"id"`
+	PassportSeries string `db:"passport_series"`
+	PassportNumber string `db:"passport_number"`
+	Name           string `db:"name"`
+	Surname        string `db:"surname"`
+	Address        string `db:"address"`
 }
 
 func (u *UserDB) ToUser() *model.User {
@@ -26,11 +26,11 @@ func (u *UserDB) ToUser() *model.User {
 }
 
 type WorkDB struct {
-	ID        string     `json:"id,omitempty" db:"id"`
-	Name      string     `json:"name" db:"name"`
-	UserID    string     `json:"user_id" db:"user_id"`
-	StartTime time.Time  `json:"start_time" db:"start_time"`
-	EndTime   *time.Time `json:"end_time" db:"end_time"`
+	ID        string     `db:"id"`
+	Name      string     `db:"name"`
+	UserID    string     `db:"user_id"`
+	StartTime time.Time  `db:"start_time"`
+	EndTime   *time.Time `db:"end_time"`
 }
 
 func (w *WorkDB) ToWork() *model.Work {

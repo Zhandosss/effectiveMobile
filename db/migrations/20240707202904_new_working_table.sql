@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS works (
     end_time TIMESTAMPTZ,
     primary key (id),
     foreign key (user_id) references users(id)
-    );
+);
 -- +goose StatementEnd
 
 -- +goose Down

@@ -5,7 +5,6 @@ import (
 	"effectiveMobileTestProblem/internal/entity"
 	"effectiveMobileTestProblem/internal/model"
 	"errors"
-	"fmt"
 	"slices"
 	"time"
 )
@@ -72,7 +71,6 @@ func (r *WorkRepository) GetWorks(ctx context.Context, user string) ([]*entity.W
 	works := make([]*entity.WorkDB, 0)
 	err := r.conn.SelectContext(ctx, &works, query, user)
 	endTime := ctx.Value("end_time").(time.Time)
-	fmt.Println(1)
 	slices.SortFunc(works, func(i, j *entity.WorkDB) int {
 		iEndTime := i.EndTime
 		jEndTime := j.EndTime
@@ -90,7 +88,6 @@ func (r *WorkRepository) GetWorks(ctx context.Context, user string) ([]*entity.W
 			return 0
 		}
 	})
-	fmt.Println(err)
 	if err != nil {
 		return nil, err
 	}

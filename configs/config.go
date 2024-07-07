@@ -3,7 +3,6 @@ package configs
 import (
 	"github.com/joho/godotenv"
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/viper"
 	"os"
 )
 
@@ -26,31 +25,23 @@ type DBConfig struct {
 }
 
 func Load() *Config {
-	viper.SetDefault("host", "localhost")
-	viper.SetDefault("port", "8080")
-
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
-	viper.AddConfigPath("./configs")
-
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatal().Msgf("Error reading config file, %s", err)
+	config := &Config{
+		Server: &ServerConfig{},
+		DB:     &DBConfig{},
 	}
 
-	config := &Config{}
-
-	err = viper.Unmarshal(config)
-	if err != nil {
-		log.Fatal().Msgf("Unable to decode into struct, %v", err)
-	}
-
-	err = godotenv.Load()
+	err := godotenv.Load()
 	if err != nil {
 		log.Fatal().Msgf("Error loading .env file")
 	}
 
+	config.Server.Host = os.Getenv("SERVER_HOST")
+	config.Server.Port = os.Getenv("SERVER_PORT")
+
+	config.DB.Host = os.Getenv("DB_HOST")
+	config.DB.Port = os.Getenv("DB_PORT")
+	config.DB.User = os.Getenv("DB_USER")
+	config.DB.Name = os.Getenv("DB_NAME")
 	config.DB.Password = os.Getenv("DB_PASSWORD")
 	return config
 }

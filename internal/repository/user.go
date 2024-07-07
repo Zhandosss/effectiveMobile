@@ -36,7 +36,6 @@ func (r *UserRepository) GetUserById(ctx context.Context, id string) (*entity.Us
 	user := make([]*entity.UserDB, 0, 1)
 	err := r.conn.SelectContext(ctx, &user, query, id)
 	if err != nil {
-		fmt.Println(err)
 		return &entity.UserDB{}, err
 	}
 
@@ -130,7 +129,6 @@ func (r *UserRepository) DeleteUserById(ctx context.Context, id string) error {
 		return err
 	}
 	if rowAffected == 0 {
-		//TODO: add error as variable
 		return fmt.Errorf("user with id %s not found", id)
 	}
 
