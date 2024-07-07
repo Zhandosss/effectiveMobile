@@ -1,0 +1,248 @@
+basePath: /api/
+definitions:
+  handlers.CreateUserRequest:
+    properties:
+      id:
+        type: string
+    type: object
+  handlers.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  handlers.GetUsersRequest:
+    properties:
+      pagination:
+        $ref: '#/definitions/handlers.PaginationInfo'
+      users:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+    type: object
+  handlers.PaginationInfo:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+    type: object
+  model.User:
+    properties:
+      address:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      passport_series_and_number:
+        type: string
+      surname:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is a simple API for tracking time spent on work for users
+  title: Time Tracker API
+  version: "1.0"
+paths:
+  /user:
+    get:
+      consumes:
+      - application/json
+      description: Get users by filters
+      operationId: getUsers
+      parameters:
+      - description: User passport series
+        in: query
+        name: passport_series
+        type: string
+      - description: User passport number
+        in: query
+        name: passport_number
+        type: string
+      - description: User name
+        in: query
+        name: name
+        type: string
+      - description: User surname
+        in: query
+        name: surname
+        type: string
+      - description: User address
+        in: query
+        name: address
+        type: string
+      - default: "10"
+        description: per page pagination parameter
+        in: query
+        name: per_page
+        type: string
+      - default: "1"
+        description: page pagination parameter
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetUsersRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get users
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with name, surname, address, passport series
+        and number
+      operationId: createUser
+      parameters:
+      - description: User information
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.CreateUserRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Create a new user
+      tags:
+      - users
+  /user/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user by id
+      operationId: deleteUserById
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Delete user by id
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: Get user by id
+      operationId: getUserById
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get user by id
+      tags:
+      - users
+  /user/passport/{passport}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user by passport
+      operationId: deleteUserByPassport
+      parameters:
+      - description: User passport series and number
+        in: path
+        name: passport
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Delete user by passport
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: Get user by passport
+      operationId: getUserByPassport
+      parameters:
+      - description: User passport series and number
+        in: path
+        name: passport
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get user by passport
+      tags:
+      - users
+swagger: "2.0"

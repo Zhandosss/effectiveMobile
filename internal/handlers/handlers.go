@@ -16,6 +16,11 @@ var (
 	ErrInvalidPassportNumber = errors.New(`invalid passport number. Passport number should be a number`)
 )
 
+type PaginationInfo struct {
+	Page  int `json:"page"`
+	Limit int `json:"limit"`
+}
+
 type ErrorResponse struct {
 	Message string `json:"message"`
 }
@@ -43,6 +48,11 @@ type Handlers struct {
 	WorkService WorkService
 }
 
+//@title Time Tracker API
+//@version 1.0
+//@description This is a simple API for tracking time spent on work for users
+
+// @basePath /api/
 func NewHandlers(e *echo.Echo, userSer UserService, workSer WorkService) {
 	handlers := &Handlers{
 		UserService: userSer,

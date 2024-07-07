@@ -11,6 +11,22 @@ import (
 	"time"
 )
 
+type CreateUserRequest struct {
+	Id string `json:"id"`
+}
+
+// CreateUser creates a new user
+// @Summary Create a new user
+// @Tags users
+// @Description Create a new user with name, surname, address, passport series and number
+// @ID createUser
+// @Accept json
+// @Produce json
+// @Param user body model.User true "User information"
+// @Success 201 {object} CreateUserRequest
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /user [post]
 func (h *Handlers) CreateUser(c echo.Context) error {
 	var req model.User
 	if err := c.Bind(&req); err != nil {
@@ -50,5 +66,5 @@ func (h *Handlers) CreateUser(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{Message: "Failed to create user"})
 	}
 	log.Info().Msgf("For request with id: %s. User created with id %s.", c.Response().Header().Get(echo.HeaderXRequestID), id)
-	return c.JSON(http.StatusCreated, map[string]string{"id": id})
+	return c.JSON(http.StatusCreated, CreateUserRequest{Id: id})
 }

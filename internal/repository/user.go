@@ -58,45 +58,44 @@ func (r *UserRepository) GetUsers(ctx context.Context) ([]*entity.UserDB, error)
 	var where []string
 	var args []interface{}
 
+	pageSize := ctx.Value("per_page")
+	page := ctx.Value("page")
+
 	if v := ctx.Value("passport_series"); v != "" {
-		where = append(where, "passport_series = ")
+		where = append(where, "passport_series = $"+fmt.Sprint(len(args)+1))
 		args = append(args, v)
 	}
 
 	if v := ctx.Value("passport_number"); v != "" {
-		where = append(where, "passport_number = ")
+		where = append(where, "passport_number = $"+fmt.Sprint(len(args)+1))
 		args = append(args, v)
 	}
 
 	if v := ctx.Value("name"); v != "" {
-		where = append(where, "name = ")
+		where = append(where, "name = $"+fmt.Sprint(len(args)+1))
 		args = append(args, v)
 	}
 
 	if v := ctx.Value("surname"); v != "" {
-		where = append(where, "surname = ")
+		where = append(where, "surname = $"+fmt.Sprint(len(args)+1))
 		args = append(args, v)
 	}
 
 	if v := ctx.Value("address"); v != "" {
-		where = append(where, "address = ")
+		where = append(where, "address = $"+fmt.Sprint(len(args)+1))
 		args = append(args, v)
 	}
 
 	query := `SELECT id, passport_number, passport_series, name, surname, address FROM users`
-	ind := 1
-	for i, w := range where {
-		if i == 0 {
-			query += " WHERE " + w + "$" + fmt.Sprint(ind)
-		} else {
-			query += " AND " + w + "$" + fmt.Sprint(ind)
-		}
-		ind++
+	if len(where) > 0 {
+		query += " WHERE " + strings.Join(where, " AND ")
 	}
-	fmt.Println(query)
+
+	query += " LIMIT $" + fmt.Sprint(len(args)+1) + " OFFSET $" + fmt.Sprint(len(args)+2)
+	args = append(args, pageSize, page)
+
 	users := make([]*entity.UserDB, 0)
 	err := r.conn.SelectContext(ctx, &users, query, args...)
-	fmt.Println(err)
 	if err != nil {
 		return nil, err
 	}

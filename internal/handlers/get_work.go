@@ -8,6 +8,18 @@ import (
 	"time"
 )
 
+// GetWorkById gets work by id
+// @Summary Get work by id
+// @Description Get work by id
+// @ID getWorkById
+// @Tags works
+// @Accept json
+// @Produce json
+// @Param id path string true "Work ID"
+// @Success 200 {object} model.Work
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /work/{id} [get]
 func (h *Handlers) GetWorkById(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
@@ -28,6 +40,18 @@ func (h *Handlers) GetWorkById(c echo.Context) error {
 	return c.JSON(http.StatusOK, work)
 }
 
+// GetWorks gets works by user
+// @Summary Get works by user
+// @Description Get works by user
+// @ID getWorks
+// @Tags works
+// @Accept json
+// @Produce json
+// @Param user query string true "User ID"
+// @Success 200 {object} GetWorksResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /work [get]
 func (h *Handlers) GetWorks(c echo.Context) error {
 	user := c.QueryParams().Get("user")
 	if user == "" {

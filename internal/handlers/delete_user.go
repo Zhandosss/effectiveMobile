@@ -8,6 +8,18 @@ import (
 	"time"
 )
 
+// DeleteUserById deletes user by id
+// @Summary Delete user by id
+// @Description Delete user by id
+// @ID deleteUserById
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path string true "User ID"
+// @Success 200 {object} nil
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /user/{id} [delete]
 func (h *Handlers) DeleteUserById(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
@@ -29,6 +41,18 @@ func (h *Handlers) DeleteUserById(c echo.Context) error {
 	return c.JSON(http.StatusOK, nil)
 }
 
+// DeleteUserByPassport deletes user by passport
+// @Summary Delete user by passport
+// @Description Delete user by passport
+// @ID deleteUserByPassport
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param passport path string true "User passport series and number"
+// @Success 200 {object} nil
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /user/passport/{passport} [delete]
 func (h *Handlers) DeleteUserByPassport(c echo.Context) error {
 	passport := c.Param("passport")
 	if passport == "" {
@@ -46,5 +70,5 @@ func (h *Handlers) DeleteUserByPassport(c echo.Context) error {
 	}
 
 	log.Info().Msgf("For request with id: %s. User with passport %s deleted", c.Response().Header().Get(echo.HeaderXRequestID), passport)
-	return c.JSON(http.StatusOK, nil)
+	return c.NoContent(http.StatusOK)
 }

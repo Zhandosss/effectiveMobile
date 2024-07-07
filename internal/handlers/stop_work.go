@@ -8,6 +8,18 @@ import (
 	"time"
 )
 
+// StopWork stops work by id
+// @Summary Stop work by id
+// @Description Stop work by id
+// @ID stopWork
+// @Tags works
+// @Accept json
+// @Produce json
+// @Param id path string true "Work ID"
+// @Success 200 {object} nil
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /work/{id} [delete]
 func (h *Handlers) StopWork(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {

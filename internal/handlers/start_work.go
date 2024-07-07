@@ -9,6 +9,22 @@ import (
 	"time"
 )
 
+type StartWorkRequest struct {
+	Id string `json:"id"`
+}
+
+// StartWork starts work
+// @Summary Start work
+// @Description Start work
+// @ID startWork
+// @Tags works
+// @Accept json
+// @Produce json
+// @Param work body model.Work true "Work information"
+// @Success 201 {object} map[string]string
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /work [post]
 func (h *Handlers) StartWork(c echo.Context) error {
 	var req model.Work
 	if err := c.Bind(&req); err != nil {
@@ -27,6 +43,6 @@ func (h *Handlers) StartWork(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{Message: "Failed to start work"})
 	}
 	log.Info().Msgf("For request with id: %s. Work started with id %s.", c.Response().Header().Get(echo.HeaderXRequestID), id)
-	return c.JSON(http.StatusCreated, map[string]string{"id": id})
+	return c.JSON(http.StatusCreated, StartWorkRequest{Id: id})
 
 }

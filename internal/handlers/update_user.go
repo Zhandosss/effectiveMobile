@@ -9,6 +9,19 @@ import (
 	"time"
 )
 
+// UpdateUserById updates user by id
+// @Summary Update user by id
+// @Description Update user by id
+// @ID updateUserById
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path string true "User ID"
+// @Param user body model.User true "User information"
+// @Success 200 {object} nil
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /user/{id} [patch]
 func (h *Handlers) UpdateUserById(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
@@ -31,9 +44,22 @@ func (h *Handlers) UpdateUserById(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{Message: "Error updating user"})
 	}
 
-	return c.JSON(http.StatusOK, nil)
+	return c.NoContent(http.StatusOK)
 }
 
+// UpdateUserByPassport updates user by passport
+// @Summary Update user by passport
+// @Description Update user by passport
+// @ID updateUserByPassport
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param passport path string true "User passport series and number"
+// @Param user body model.User true "User information"
+// @Success 200 {object} nil
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /user/passport/{passport} [patch]
 func (h *Handlers) UpdateUserByPassport(c echo.Context) error {
 	passport := c.Param("passport")
 	if passport == "" {
@@ -52,5 +78,5 @@ func (h *Handlers) UpdateUserByPassport(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{Message: "Error updating user"})
 	}
 
-	return c.JSON(http.StatusOK, nil)
+	return c.NoContent(http.StatusOK)
 }
