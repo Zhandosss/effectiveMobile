@@ -25,6 +25,7 @@ type ErrorResponse struct {
 	Message string `json:"message"`
 }
 
+//go:generate go run github.com/vektra/mockery/v2@v2.43.2 --name UserService --output mocks/
 type UserService interface {
 	CreateUser(ctx context.Context, user *model.User) (string, error)
 	GetUserById(ctx context.Context, id string) (*model.User, error)
@@ -104,8 +105,6 @@ func NewHandlers(e *echo.Echo, userSer UserService, workSer WorkService) {
 			work.GET("/:id", handlers.GetWorkById)
 			work.GET("", handlers.GetWorks)
 			work.GET("/:id/stop", handlers.StopWork)
-			//work.GET("/:id/resume", handlers.ResumeWork)
-
 		}
 	}
 }

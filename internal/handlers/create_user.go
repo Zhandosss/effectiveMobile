@@ -4,6 +4,7 @@ import (
 	"context"
 	"effectiveMobileTestProblem/internal/model"
 	"errors"
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 	"net/http"
@@ -44,19 +45,8 @@ func (h *Handlers) CreateUser(c echo.Context) error {
 	passportData := strings.Split(req.PassportSeriesAndNumber, " ")
 	log.Debug().Msgf("Passport data: %+v", passportData)
 
-	if len(passportData) != 2 {
-		log.Error().Msgf("Invalid passport series and number format. Passport data: %+v", passportData)
-		return c.JSON(http.StatusBadRequest, ErrorResponse{Message: `Invalid passport series and number format. Should be in next format: "1234 123456"`})
-	}
-
-	if _, err := strconv.Atoi(passportData[0]); err != nil {
-		log.Error().Msgf("Invalid passport series. Passport data: %+v", passportData[0])
-		return c.JSON(http.StatusBadRequest, ErrorResponse{Message: "Invalid passport series. Should be a number"})
-	}
-
-	if _, err := strconv.Atoi(passportData[1]); err != nil {
-		log.Error().Msgf("Invalid passport number. Passport data: %+v", passportData[1])
-		return c.JSON(http.StatusBadRequest, ErrorResponse{Message: "Invalid passport number. Should be a number"})
+	if err := validatePassportData(passportData); err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{Message: err.Error()})
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 10*time.Second)
@@ -74,4 +64,21 @@ func (h *Handlers) CreateUser(c echo.Context) error {
 	}
 	log.Info().Msgf("For request with id: %s. User created with id %s.", c.Response().Header().Get(echo.HeaderXRequestID), id)
 	return c.JSON(http.StatusCreated, CreateUserRequest{Id: id})
+}
+
+func validatePassportData(passportData []string) error {
+	if len(passportData) != 2 {
+		log.Error().Msgf("Invalid passport series and number format. Passport data: %+v", passportData)
+		return fmt.Errorf(`Invalid passport series and number format. Should be in next format: 1234 123456`)
+	}
+	if _, err := strconv.Atoi(passportData[0]); err != nil {
+		log.Error().Msgf("Invalid passport series. Passport data: %+v", passportData[0])
+		return fmt.Errorf("Invalid passport series. Passport series should be a number")
+	}
+
+	if _, err := strconv.Atoi(passportData[1]); err != nil {
+		log.Error().Msgf("Invalid passport number. Passport data: %+v", passportData[1])
+		return fmt.Errorf("Invalid passport number. Passport number should be a number")
+	}
+	return nil
 }
