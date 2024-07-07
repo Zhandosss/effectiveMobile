@@ -64,34 +64,31 @@ func (r *UserRepository) GetUserByPassport(ctx context.Context, passport string)
 	return user[0], nil
 }
 
-func (r *UserRepository) GetUsers(ctx context.Context) ([]*entity.UserDB, error) {
+func (r *UserRepository) GetUsers(ctx context.Context, filterAndPagination *model.FilterAndPagination) ([]*entity.UserDB, error) {
 	var where []string
 	var args []interface{}
 
-	pageSize := ctx.Value("per_page")
-	page := ctx.Value("page")
-
-	if v := ctx.Value("passport_series"); v != "" {
+	if v := filterAndPagination.PassportSeries; v != "" {
 		where = append(where, "passport_series = $"+fmt.Sprint(len(args)+1))
 		args = append(args, v)
 	}
 
-	if v := ctx.Value("passport_number"); v != "" {
+	if v := filterAndPagination.PassportNumber; v != "" {
 		where = append(where, "passport_number = $"+fmt.Sprint(len(args)+1))
 		args = append(args, v)
 	}
 
-	if v := ctx.Value("name"); v != "" {
+	if v := filterAndPagination.Name; v != "" {
 		where = append(where, "name = $"+fmt.Sprint(len(args)+1))
 		args = append(args, v)
 	}
 
-	if v := ctx.Value("surname"); v != "" {
+	if v := filterAndPagination.Surname; v != "" {
 		where = append(where, "surname = $"+fmt.Sprint(len(args)+1))
 		args = append(args, v)
 	}
 
-	if v := ctx.Value("address"); v != "" {
+	if v := filterAndPagination.Address; v != "" {
 		where = append(where, "address = $"+fmt.Sprint(len(args)+1))
 		args = append(args, v)
 	}
@@ -102,7 +99,7 @@ func (r *UserRepository) GetUsers(ctx context.Context) ([]*entity.UserDB, error)
 	}
 
 	query += " LIMIT $" + fmt.Sprint(len(args)+1) + " OFFSET $" + fmt.Sprint(len(args)+2)
-	args = append(args, pageSize, page)
+	args = append(args, filterAndPagination.PerPage, filterAndPagination.PerPage)
 
 	users := make([]*entity.UserDB, 0)
 	err := r.conn.SelectContext(ctx, &users, query, args...)

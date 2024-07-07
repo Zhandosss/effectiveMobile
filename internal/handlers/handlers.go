@@ -22,7 +22,7 @@ type UserService interface {
 	CreateUser(ctx context.Context, user *model.User) (string, error)
 	GetUserById(ctx context.Context, id string) (*model.User, error)
 	GetUserByPassport(ctx context.Context, passport string) (*model.User, error)
-	GetUsers(ctx context.Context) ([]*model.User, error)
+	GetUsers(ctx context.Context, filterAndPagination *model.FilterAndPagination) ([]*model.User, error)
 	DeleteUserById(ctx context.Context, id string) error
 	DeleteUserByPassport(ctx context.Context, passport string) error
 	UpdateUserById(ctx context.Context, id string, user *model.User) error

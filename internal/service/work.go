@@ -6,7 +6,7 @@ import (
 )
 
 func (s *WorkService) StartWork(ctx context.Context, work *model.Work) (string, error) {
-	return s.WorkRepository.NewWork(ctx, work)
+	return s.WorkRepository.AddWork(ctx, work)
 }
 
 func (s *WorkService) StopWork(ctx context.Context, id string) error {

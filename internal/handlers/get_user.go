@@ -109,12 +109,13 @@ func (h *Handlers) GetUserByPassport(c echo.Context) error {
 // @Router /user [get]
 func (h *Handlers) GetUsers(c echo.Context) error {
 	var err error
-	passportSeries := c.QueryParam("passport_series")
-	passportNumber := c.QueryParam("passport_number")
-	name := c.QueryParam("name")
-	surname := c.QueryParam("surname")
-	address := c.QueryParam("address")
-	log.Info().Msgf("For request with id: %s. GetUsers request with next filters: passport_series: %s, passport_number: %s, name: %s, surname: %s, address: %s", c.Response().Header().Get(echo.HeaderXRequestID), passportSeries, passportNumber, name, surname, address)
+	filterAndPagination := &model.FilterAndPagination{}
+	filterAndPagination.PassportSeries = c.QueryParam("passport_series")
+	filterAndPagination.PassportNumber = c.QueryParam("passport_number")
+	filterAndPagination.Name = c.QueryParam("name")
+	filterAndPagination.Surname = c.QueryParam("surname")
+	filterAndPagination.Address = c.QueryParam("address")
+	log.Info().Msgf("For request with id: %s. GetUsers request with next filters: passport_series: %s, passport_number: %s, name: %s, surname: %s, address: %s", c.Response().Header().Get(echo.HeaderXRequestID), filterAndPagination.PassportSeries, filterAndPagination.PassportNumber, filterAndPagination.Name, filterAndPagination.Surname, filterAndPagination.Address)
 
 	perPage := c.QueryParam("per_page")
 	page := c.QueryParam("page")
@@ -145,16 +146,10 @@ func (h *Handlers) GetUsers(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 10*time.Second)
 	defer cancel()
 
-	ctx = context.WithValue(ctx, "passport_series", passportSeries)
-	ctx = context.WithValue(ctx, "passport_number", passportNumber)
-	ctx = context.WithValue(ctx, "name", name)
-	ctx = context.WithValue(ctx, "surname", surname)
-	ctx = context.WithValue(ctx, "address", address)
+	filterAndPagination.PerPage = perPage
+	filterAndPagination.Page = page
 
-	ctx = context.WithValue(ctx, "per_page", perPage)
-	ctx = context.WithValue(ctx, "page", page)
-
-	users, err := h.UserService.GetUsers(ctx)
+	users, err := h.UserService.GetUsers(ctx, filterAndPagination)
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting users")
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{Message: "Error getting users"})

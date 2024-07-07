@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func (r *WorkRepository) NewWork(ctx context.Context, work *model.Work) (string, error) {
+func (r *WorkRepository) AddWork(ctx context.Context, work *model.Work) (string, error) {
 	tx, err := r.conn.Begin()
 	if err != nil {
 		return "", err

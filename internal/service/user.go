@@ -33,8 +33,8 @@ func (s *UserService) GetUserByPassport(ctx context.Context, passport string) (*
 	return user.ToUser(), nil
 }
 
-func (s *UserService) GetUsers(ctx context.Context) ([]*model.User, error) {
-	users, err := s.userRepository.GetUsers(ctx)
+func (s *UserService) GetUsers(ctx context.Context, filterAndPagination *model.FilterAndPagination) ([]*model.User, error) {
+	users, err := s.userRepository.GetUsers(ctx, filterAndPagination)
 	if err != nil {
 		return nil, err
 	}
